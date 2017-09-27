@@ -165,7 +165,7 @@ def distorted_inputs():
   return images, labels
 
 
-def inputs(eval_data):
+def inputs(eval_data, strided_slice_cpu=False):
   """Construct input for CIFAR evaluation using the Reader ops.
 
   Args:
@@ -183,7 +183,7 @@ def inputs(eval_data):
   data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
   images, labels = cifar10_input.inputs(eval_data=eval_data,
                                         data_dir=data_dir,
-                                        batch_size=FLAGS.batch_size)
+                                        batch_size=FLAGS.batch_size, strided_slice_cpu=strided_slice_cpu)
   if FLAGS.use_fp16:
     images = tf.cast(images, tf.float16)
     labels = tf.cast(labels, tf.float16)

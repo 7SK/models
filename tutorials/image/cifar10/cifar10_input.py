@@ -35,7 +35,7 @@ NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
 NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
 
-def read_cifar10(filename_queue):
+def read_cifar10(filename_queue, strided_slice_cpu = False):
   """Reads and parses examples from CIFAR10 data files.
 
   Recommendation: if you want N-way read parallelism, call this function
@@ -83,8 +83,13 @@ def read_cifar10(filename_queue):
   record_bytes = tf.decode_raw(value, tf.uint8)
 
   # The first bytes represent the label, which we convert from uint8->int32.
-  result.label = tf.cast(
-      tf.strided_slice(record_bytes, [0], [label_bytes]), tf.int32)
+  if strided_slice_cpu:
+    with tf.device('/cpu:0'):
+        result.label = tf.cast(
+            tf.strided_slice(record_bytes, [0], [label_bytes]), tf.int32)
+  else:
+    result.label = tf.cast(
+        tf.strided_slice(record_bytes, [0], [label_bytes]), tf.int32)
 
   # The remaining bytes after the label represent the image, which we reshape
   # from [depth * height * width] to [depth, height, width].
@@ -202,7 +207,7 @@ def distorted_inputs(data_dir, batch_size):
                                          shuffle=True)
 
 
-def inputs(eval_data, data_dir, batch_size):
+def inputs(eval_data, data_dir, batch_size, strided_slice_cpu):
   """Construct input for CIFAR evaluation using the Reader ops.
 
   Args:
@@ -230,7 +235,7 @@ def inputs(eval_data, data_dir, batch_size):
   filename_queue = tf.train.string_input_producer(filenames)
 
   # Read examples from files in the filename queue.
-  read_input = read_cifar10(filename_queue)
+  read_input = read_cifar10(filename_queue, strided_slice_cpu)
   reshaped_image = tf.cast(read_input.uint8image, tf.float32)
 
   height = IMAGE_SIZE
@@ -238,8 +243,9 @@ def inputs(eval_data, data_dir, batch_size):
 
   # Image processing for evaluation.
   # Crop the central [height, width] of the image.
+
   resized_image = tf.image.resize_image_with_crop_or_pad(reshaped_image,
-                                                         height, width)
+                                                     height, width)
 
   # Subtract off the mean and divide by the variance of the pixels.
   float_image = tf.image.per_image_standardization(resized_image)

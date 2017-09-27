@@ -64,7 +64,7 @@ parser.add_argument('--run_once', type=bool, default=True,
                     help='Whether to run eval only once.')
 
 
-def eval_once(saver, summary_writer, top_k_op, summary_op):
+def eval_once(saver, summary_writer, labels, summary_op):
   """Run Eval once.
 
   Args:
@@ -99,13 +99,15 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
       while step < num_iter and not coord.should_stop():
-        predictions = sess.run([top_k_op])
-        true_count += np.sum(predictions)
+        #predictions = sess.run([top_k_op])
+        #true_count += np.sum(predictions)
+        label_value = sess.run([labels])
+        print('Step:', step, 'label', label_value)
         step += 1
 
       # Compute precision @ 1.
       precision = true_count / total_sample_count
-      print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+      #print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
 
       summary = tf.Summary()
       summary.ParseFromString(sess.run(summary_op))
@@ -123,7 +125,7 @@ def evaluate():
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
     eval_data = FLAGS.eval_data == 'test'
-    images, labels = cifar10.inputs(eval_data=eval_data)
+    images, labels = cifar10.inputs(eval_data=eval_data, strided_slice_cpu=True)
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
@@ -144,7 +146,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op)
+      eval_once(saver, summary_writer, labels, summary_op)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)

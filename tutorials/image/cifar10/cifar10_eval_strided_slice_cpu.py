@@ -123,13 +123,15 @@ def evaluate():
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
     eval_data = FLAGS.eval_data == 'test'
-    images, labels = cifar10.inputs(eval_data=eval_data)
+    images, labels = cifar10.inputs(eval_data=eval_data, strided_slice_cpu=True)
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
+
     logits = cifar10.inference(images)
 
     # Calculate predictions.
+
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
     # Restore the moving average version of the learned variables for eval.

@@ -120,16 +120,18 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
 
 def evaluate():
   """Eval CIFAR-10 for a number of steps."""
-  with tf.Graph().as_default() as g:
+  with tf.Graph().as_default() as g, tf.device('/cpu:0'):
     # Get images and labels for CIFAR-10.
     eval_data = FLAGS.eval_data == 'test'
     images, labels = cifar10.inputs(eval_data=eval_data)
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
+
     logits = cifar10.inference(images)
 
     # Calculate predictions.
+
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
     # Restore the moving average version of the learned variables for eval.
