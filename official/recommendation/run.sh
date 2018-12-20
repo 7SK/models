@@ -27,13 +27,13 @@ mkdir -p ${LOCAL_TEST_DIR}
 
 TPU=${TPU:-""}
 if [[ -z ${TPU} ]]; then
-  DEVICE_FLAG="--num_gpus -1 --use_xla_for_gpu"
+  DEVICE_FLAG="--num_gpus -1"
 else
   DEVICE_FLAG="--tpu ${TPU} --num_gpus 0"
 fi
 
 DATA_DIR="${ROOT_DIR}/movielens_data"
-python ../datasets/movielens.py --data_dir ${DATA_DIR} --dataset ${DATASET}
+python3 ../datasets/movielens.py --data_dir ${DATA_DIR} --dataset ${DATASET}
 
 {
 
@@ -59,7 +59,7 @@ do
   #   --hash_pipeline
   #
   # (`--hash_pipeline` will slow down training, though not as much as one might imagine.)
-  python ncf_main.py --model_dir ${MODEL_DIR} \
+  python3 ncf_main.py --model_dir ${MODEL_DIR} \
                      --data_dir ${DATA_DIR} \
                      --dataset ${DATASET} --hooks "" \
                      ${DEVICE_FLAG} \
