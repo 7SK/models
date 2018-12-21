@@ -29,7 +29,7 @@ SUPPORTED_RNNS = {
 
 # Parameters for batch normalization.
 _BATCH_NORM_EPSILON = 1e-5
-_BATCH_NORM_DECAY = 0.997
+_BATCH_NORM_DECAY = 0.9
 
 # Filters of convolution layer
 _CONV_FILTERS = 32

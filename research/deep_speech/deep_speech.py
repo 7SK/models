@@ -363,11 +363,11 @@ def define_deep_speech_flags():
 
   # RNN related flags
   flags.DEFINE_integer(
-      name="rnn_hidden_size", default=800,
+      name="rnn_hidden_size", default=2560,
       help=flags_core.help_wrap("The hidden size of RNNs."))
 
   flags.DEFINE_integer(
-      name="rnn_hidden_layers", default=5,
+      name="rnn_hidden_layers", default=3,
       help=flags_core.help_wrap("The number of RNN layers."))
 
   flags.DEFINE_bool(
@@ -375,7 +375,7 @@ def define_deep_speech_flags():
       help=flags_core.help_wrap("Use bias in the last fully-connected layer"))
 
   flags.DEFINE_bool(
-      name="is_bidirectional", default=True,
+      name="is_bidirectional", default=False,
       help=flags_core.help_wrap("If rnn unit is bidirectional"))
 
   flags.DEFINE_enum(
@@ -386,7 +386,7 @@ def define_deep_speech_flags():
 
   # Training related flags
   flags.DEFINE_float(
-      name="learning_rate", default=5e-4,
+      name="learning_rate", default=0.00075,
       help=flags_core.help_wrap("The initial learning rate."))
 
   # Evaluation metrics threshold
