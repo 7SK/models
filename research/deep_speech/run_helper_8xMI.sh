@@ -1,8 +1,9 @@
 set -e
 
 echo "export PYTHONPATH"
-export PYTHONPATH="../../:$PYTHONPATH"
-pip3 install -r ../../official/requirements.txt
+export PYTHONPATH="/models:$PYTHONPATH"
+pip3 install -r /models/official/requirements.txt
+pip3 install -r requirements.txt
 
 echo "Clearing caches."
 sync && echo 3 | tee /host_proc/sys/vm/drop_caches

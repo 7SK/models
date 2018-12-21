@@ -30,6 +30,8 @@ RUN apt-get install -y --no-install-recommends \
       python3-setuptools \
       python3-venv
 
+RUN apt-get install  -y --no-install-recommends \
+      sox libsox-fmt-mp3
 
 # Install CUDA 10 and python2 and python 3.5 (default for Ubuntu 16.04)
 #RUN apt-get install -y --no-install-recommends \
