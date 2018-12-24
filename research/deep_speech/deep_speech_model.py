@@ -121,7 +121,7 @@ def _rnn_layer(inputs, rnn_cell, rnn_hidden_size, layer_id, is_batch_norm,
         swap_memory=True)
     rnn_outputs = tf.concat(outputs, -1)
   else:
-    rnn_outputs = tf.nn.dynamic_rnn(
+    rnn_outputs, _ = tf.nn.dynamic_rnn(
         fw_cell, inputs, dtype=tf.float32, swap_memory=True)
 
   return rnn_outputs
@@ -172,7 +172,7 @@ class DeepSpeech2(object):
     rnn_cell = SUPPORTED_RNNS[self.rnn_type]
     for layer_counter in xrange(self.num_rnn_layers):
       # No batch normalization on the first layer.
-      is_batch_norm = (layer_counter != 0)
+      is_batch_norm = False #(layer_counter != 0)
       inputs = _rnn_layer(
           inputs, rnn_cell, self.rnn_hidden_size, layer_counter + 1,
           is_batch_norm, self.is_bidirectional, training)

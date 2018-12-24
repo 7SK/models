@@ -23,7 +23,7 @@ echo "STARTING TIMING RUN AT $start_fmt"
 python3 -c 'import tensorflow; print(tensorflow.__version__)'
 python3 -c 'import tensorflow; print(tensorflow.__git_version__)'
 
-python3 deep_speech.py --train_data_dir=/data/librispeech_data/final_train_dataset.csv --eval_data_dir=/data/librispeech_data/final_eval_dataset.csv --num_gpus=-1 --wer_threshold=0.23 --seed=1
+python3 deep_speech.py --train_data_dir="/data/librispeech_data/final_train_dataset.csv" --eval_data_dir="/data/librispeech_data/final_eval_dataset.csv" --num_gpus=-1 --wer_threshold=0.23 --seed=1
 
 # end timing
 end=$(date +%s)
