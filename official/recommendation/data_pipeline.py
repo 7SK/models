@@ -14,9 +14,9 @@
 # ==============================================================================
 """Asynchronous data producer for the NCF pipeline."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import atexit
 import functools
@@ -124,7 +124,7 @@ class DatasetManager(object):
 
     feature_dict = {
         k: tf.train.Feature(bytes_list=tf.train.BytesList(
-            value=[memoryview(v).tobytes()])) for k, v in data.items()}
+            value=[memoryview(v).tobytes()])) for k, v in list(data.items())}
 
     return tf.train.Example(
         features=tf.train.Features(feature=feature_dict)).SerializeToString()
@@ -458,7 +458,7 @@ class BaseDataConstructor(threading.Thread):
     args = [(self._elements_in_epoch, stat_utils.random_int32())
             for _ in range(self._maximum_number_epochs)]
     imap = pool.imap if self.deterministic else pool.imap_unordered
-    self._shuffle_iterator = imap(stat_utils.permutation, args)
+    self._shuffle_iterator = map(stat_utils.permutation, args)
 
   def _get_training_batch(self, i):
     """Construct a single batch of training data.

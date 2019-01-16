@@ -14,9 +14,9 @@
 # ==============================================================================
 """Test NCF data pipeline."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 from collections import defaultdict
 import hashlib
@@ -140,8 +140,8 @@ class BaseTest(tf.test.TestCase):
     producer.join()
     assert producer._fatal_exception is None
 
-    user_inv_map = {v: k for k, v in producer.user_map.items()}
-    item_inv_map = {v: k for k, v in producer.item_map.items()}
+    user_inv_map = {v: k for k, v in list(producer.user_map.items())}
+    item_inv_map = {v: k for k, v in list(producer.item_map.items())}
 
     # ==========================================================================
     # == Training Data =========================================================
@@ -182,7 +182,7 @@ class BaseTest(tf.test.TestCase):
         train_examples[l].add((u_raw, i_raw))
         counts[(u_raw, i_raw)] += 1
 
-    self.assertRegexpMatches(md5.hexdigest(), END_TO_END_TRAIN_MD5)
+    self.assertRegex(md5.hexdigest(), END_TO_END_TRAIN_MD5)
 
     num_positives_seen = len(train_examples[True])
     self.assertEqual(producer._train_pos_users.shape[0], num_positives_seen)
@@ -244,7 +244,7 @@ class BaseTest(tf.test.TestCase):
           # from the negatives.
           assert (u_raw, i_raw) not in self.seen_pairs
 
-    self.assertRegexpMatches(md5.hexdigest(), END_TO_END_EVAL_MD5)
+    self.assertRegex(md5.hexdigest(), END_TO_END_EVAL_MD5)
 
   def _test_fresh_randomness(self, constructor_type):
     train_epochs = 5
@@ -284,7 +284,7 @@ class BaseTest(tf.test.TestCase):
         else:
           negative_counts[(u, i)] += 1
 
-    self.assertRegexpMatches(md5.hexdigest(), FRESH_RANDOMNESS_MD5)
+    self.assertRegex(md5.hexdigest(), FRESH_RANDOMNESS_MD5)
 
     # The positive examples should appear exactly once each epoch
     self.assertAllEqual(list(positive_counts.values()),
@@ -311,7 +311,7 @@ class BaseTest(tf.test.TestCase):
 
     # Tally the actual observed counts.
     count_distribution = [0 for _ in range(train_epochs + 1)]
-    for i in negative_counts.values():
+    for i in list(negative_counts.values()):
       i = min([i, train_epochs])  # round down tail for simplicity.
       count_distribution[i] += 1
     count_distribution[0] = neg_pair_cardinality - sum(count_distribution[1:])

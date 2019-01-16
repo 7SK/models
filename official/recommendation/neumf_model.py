@@ -29,9 +29,9 @@ MLP for modeling the user-item latent structures.
 In NeuMF model, it allows GMF and MLP to learn separate embeddings, and combine
 the two models by concatenating their last hidden layer.
 """
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
+
 
 import sys
 import typing
@@ -210,7 +210,7 @@ def construct_model(users, items, params):
   mlp_vector = tf.keras.layers.concatenate([mlp_user_latent, mlp_item_latent])
 
   num_layer = len(model_layers)  # Number of layers in the MLP
-  for layer in xrange(1, num_layer):
+  for layer in range(1, num_layer):
     model_layer = tf.keras.layers.Dense(
         model_layers[layer],
         kernel_regularizer=tf.keras.regularizers.l2(mlp_reg_layers[layer]),
