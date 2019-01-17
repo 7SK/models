@@ -1,4 +1,4 @@
-FROM 7sk10/tensorflow:rocm1.9.2-tf1.12-python3-rccl-v1
+FROM 7sk10/tensorflow:rocm2.0-tf1.12-python3-dev-rccl
 
 WORKDIR /root
 ENV HOME /root

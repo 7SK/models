@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+echo "export PYTHONPATH"
+export PYTHONPATH="/models:$PYTHONPATH"
+pip3 install -r /models/official/requirements.txt
+
 if [ `id -u` != 0 ]; then
   echo "Calling sudo to gain root for this shell. (Needed to clear caches.)"
   sudo echo "Success"
@@ -33,7 +37,7 @@ else
 fi
 
 DATA_DIR="${ROOT_DIR}/movielens_data"
-python3 ../datasets/movielens.py --data_dir ${DATA_DIR} --dataset ${DATASET}
+python3 /models/official/datasets/movielens.py --data_dir ${DATA_DIR} --dataset ${DATASET}
 
 {
 
