@@ -27,11 +27,7 @@ mkdir -p ${LOCAL_TEST_DIR}
 
 TPU=${TPU:-""}
 if [[ -z ${TPU} ]]; then
-<<<<<<< HEAD
-  DEVICE_FLAG="--num_gpus -1"
-=======
-  DEVICE_FLAG="--num_gpus -1"  --use_xla_for_gpu"
->>>>>>> upstream/master
+  DEVICE_FLAG="--num_gpus -1" # --use_xla_for_gpu"
 else
   DEVICE_FLAG="--tpu ${TPU} --num_gpus 0"
 fi
@@ -58,27 +54,8 @@ do
 
   # To reduce variation set the seed flag:
   #   --seed ${i}
-<<<<<<< HEAD
-  #
-  # And to confirm that the pipeline is deterministic pass the flag:
-  #   --hash_pipeline
-  #
-  # (`--hash_pipeline` will slow down training, though not as much as one might imagine.)
-  python3 ncf_main.py --model_dir ${MODEL_DIR} \
-                     --data_dir ${DATA_DIR} \
-                     --dataset ${DATASET} --hooks "" \
-                     ${DEVICE_FLAG} \
-                     --clean \
-                     --train_epochs 20 \
-                     --batch_size 2048 \
-                     --eval_batch_size 100000 \
-                     --learning_rate 0.0005 \
-                     --layers 256,256,128,64 --num_factors 64 \
-                     --hr_threshold 0.635 \
-                     --ml_perf \
-=======
 
-  python -u ncf_main.py \
+  python3 -u ncf_main.py \
       --model_dir ${MODEL_DIR} \
       --data_dir ${DATA_DIR} \
       --dataset ${DATASET} --hooks "" \
@@ -94,7 +71,6 @@ do
       --layers 256,256,128,64 --num_factors 64 \
       --hr_threshold 0.635 \
       --ml_perf \
->>>>>>> upstream/master
  |& tee ${RUN_LOG} \
  | grep --line-buffered  -E --regexp="(Iteration [0-9]+: HR = [0-9\.]+, NDCG = [0-9\.]+, Loss = [0-9\.]+)|(pipeline_hash)|(MLPerf time:)"
 
