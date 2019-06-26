@@ -189,6 +189,14 @@ def build_stats(history, eval_output, time_callback):
 def define_keras_flags():
   flags.DEFINE_boolean(name='enable_eager', default=False, help='Enable eager?')
   flags.DEFINE_boolean(name='skip_eval', default=False, help='Skip evaluation?')
+  flags.DEFINE_boolean(name='enable_lms', default=False, help='Enable lms')
+  flags.DEFINE_integer(
+      name='n_tensors', default=-1,
+      help='The number of tensors to swap. Default -1 (all)')
+  flags.DEFINE_integer(
+      name='lb', default=1,
+      help='Lowerbound value for LMS. A tensor will be swapped in during the '
+      'backward phase at least lb nodes before it in the graph. Default 1.')
   flags.DEFINE_integer(
       name='train_steps', default=None,
       help='The number of steps to run for training. If it is larger than '

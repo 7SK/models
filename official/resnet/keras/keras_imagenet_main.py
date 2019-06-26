@@ -28,6 +28,9 @@ from official.resnet.keras import resnet_model
 from official.utils.flags import core as flags_core
 from official.utils.logs import logger
 from official.utils.misc import distribution_utils
+from tensorflow.core.protobuf import rewriter_config_pb2
+from tensorflow_large_model_support import LMSKerasCallback
+
 
 
 LR_SCHEDULE = [    # (multiplier, epoch to start) tuples
@@ -89,6 +92,17 @@ def run(flags_obj):
   """
   if flags_obj.enable_eager:
     tf.enable_eager_execution()
+  if flags_obj.enable_lms:
+    config = tf.ConfigProto()
+    config.graph_options.rewrite_options.memory_optimization = rewriter_config_pb2.RewriterConfig.SCHEDULING_HEURISTICS
+    tf.keras.backend.set_session(tf.Session(config=config))
+    # Specifying this starting name, from previous runs of LMS,
+    # speeds up graph analysis time.
+    starting_names = ['bn_conv1/cond/pred_id']
+    lms = LMSKerasCallback(n_tensors=flags_obj.n_tensors, lb=flags_obj.lb,
+    starting_op_names=starting_names)
+  else:
+    lms = LMSKerasCallback(n_tensors=0)
 
   dtype = flags_core.get_tf_dtype(flags_obj)
   if dtype == 'fp16':
@@ -97,8 +111,8 @@ def run(flags_obj):
 
   data_format = flags_obj.data_format
   if data_format is None:
-    data_format = ('channels_first'
-                   if tf.test.is_built_with_cuda() else 'channels_last')
+    data_format = ('channels_first')
+#                   if tf.test.is_built_with_cuda() else 'channels_last')
   tf.keras.backend.set_image_data_format(data_format)
 
   # pylint: disable=protected-access
@@ -166,7 +180,8 @@ def run(flags_obj):
                       callbacks=[
                           time_callback,
                           lr_callback,
-                          tensorboard_callback
+                          tensorboard_callback,
+                          lms
                       ],
                       validation_steps=num_eval_steps,
                       validation_data=validation_data,
